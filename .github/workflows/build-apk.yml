@@ -1,0 +1,50 @@
+name: Gerar APK - Granja Fácil
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Configurar Android
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Criar projeto Capacitor
+        run: |
+          mkdir app
+          cp granja_facil_v10.html app/index.html
+          cd app
+          npm init -y
+          npm install @capacitor/core@7 @capacitor/android@7
+          npm install -D @capacitor/cli@7
+          npx cap init "Granja Fácil" "mz.granjafacil.app" --web-dir=.
+          npx cap add android
+          npx cap sync android
+
+      - name: Gerar APK
+        run: |
+          cd app/android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Granja-Facil-APK
+          path: app/android/app/build/outputs/apk/debug/app-debug.apk
