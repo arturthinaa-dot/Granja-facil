@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Granja Fácil V6</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f2f6f3;color:#173b2a}
+header{background:#08783f;color:#fff;padding:20px 16px;border-radius:0 0 24px 24px}.wrap{max-width:700px;margin:auto;padding:14px}
+.card{background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 9px #0001}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{padding:15px;border-radius:14px;color:#fff}.g{background:#18a957}.b{background:#218fd8}.o{background:#ed9425}.p{background:#a34db4}.stat b{display:block;font-size:23px;margin-top:6px}
+input,select{width:100%;padding:12px;border:1px solid #ccd8d1;border-radius:10px;margin:5px 0 10px;font-size:16px}
+button{border:0;background:#08783f;color:#fff;padding:12px 15px;border-radius:11px;font-weight:bold;width:100%;margin-top:6px}.alt{background:#e7f3ec;color:#08783f}
+.farm{border:1px solid #d7e3dc;padding:13px;border-radius:13px;margin:8px 0}.muted{color:#65786e;font-size:13px}
+.alarm{display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #d7e3dc;border-radius:12px;margin:8px 0}.alarm b{font-size:18px}
+nav{position:sticky;bottom:0;background:#fff;border-top:1px solid #ddd;padding:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px}nav button{background:#fff;color:#08783f;font-size:10px;padding:8px 2px}
+</style>
+</head>
+<body>
+<header><h1>🐔 Granja Fácil</h1><small>Versão 10 • Gestão de criações</small><div>Gestão da tua criação</div><small id="headerLocation">📍 Xai-Xai • 🇲🇿 MT</small></header>
+<div class="wrap">
+<section class="card"><h2>📊 Painel geral</h2><div class="grid">
+<div class="stat g">🏡 Granjas<b id="sF">0</b></div><div class="stat b">🐔 Aves<b id="sA">0</b></div>
+<div class="stat o">🥚 Ovos<b id="sO">0</b></div><div class="stat p">💰 Lucro<b id="sP">0 MT</b></div>
+</div></section>
+
+<section class="card" id="farmSec"><h2>🏡 Minhas Granjas</h2>
+<input id="fn" placeholder="Nome da granja"><input id="fl" placeholder="Localização"><button id="addFarm">➕ Adicionar granja</button><div id="farmList"></div></section>
+
+<section class="card"><h2>🐔 Plantel</h2><select id="stockFarm"></select>
+<input id="layers" type="number" min="0" placeholder="Poedeiras"><input id="roosters" type="number" min="0" placeholder="Galos"><input id="chicks" type="number" min="0" placeholder="Pintos">
+<button id="saveStock">Guardar plantel</button></section>
+
+<section class="card"><h2>🥚 Produção de ovos</h2><select id="eggFarm"></select><input id="eggAmount" type="number" min="1" placeholder="Ovos produzidos"><button id="saveEgg">Guardar produção</button></section>
+
+<section class="card"><h2>💰 Vendas</h2><select id="saleFarm"></select>
+<input id="eggSale" type="number" min="0" placeholder="Venda de ovos — quantidade"><input id="eggSaleValue" type="number" min="0" placeholder="Valor da venda de ovos (MT)">
+<input id="chickSale" type="number" min="0" placeholder="Venda de pintos — quantidade"><input id="chickSaleValue" type="number" min="0" placeholder="Valor da venda de pintos (MT)">
+<input id="henSale" type="number" min="0" placeholder="Venda de galinhas — quantidade"><input id="henSaleValue" type="number" min="0" placeholder="Valor da venda de galinhas (MT)">
+<button id="saveSales">Guardar vendas</button></section>
+
+<section class="card"><h2>🌾 Compra de ração</h2><select id="feedFarm"></select>
+<input id="feedName" placeholder="Tipo de ração (ex.: milho, farelo, ração completa)"><input id="feedQty" type="number" min="0" placeholder="Quantidade (kg)">
+<input id="feedValue" type="number" min="0" placeholder="Valor pago (MT)"><input id="feedDate" type="date">
+<button id="saveFeed">Registar compra</button><div id="feedList"></div></section>
+
+<section class="card"><h2>⏰ Horários para dar comida</h2>
+<p class="muted">Horários padrão: 07:00, 15:00 e 19:00. Ativa o lembrete no telefone.</p>
+<div class="alarm"><span>🌅 <b>07:00</b></span><input id="a7" type="checkbox" checked></div>
+<div class="alarm"><span>☀️ <b>15:00</b></span><input id="a15" type="checkbox" checked></div>
+<div class="alarm"><span>🌙 <b>19:00</b></span><input id="a19" type="checkbox" checked></div>
+<button id="notifyBtn">🔔 Ativar lembretes</button>
+<p id="alarmStatus" class="muted"></p></section>
+
+
+
+
+<section class="card" id="speciesSec"><h2>➕ Outras Criações</h2>
+<p class="muted">Adicione perus, codornizes ou qualquer outra criação. Cada criação fica separada.</p>
+<input id="newSpecies" placeholder="Nome da criação (ex.: Perus, Codornizes, Gansos)">
+<button id="addSpecies">➕ Adicionar criação</button>
+<div id="speciesList"></div>
+</section>
+<section class="card" id="duckSec"><h2>🦆 Criação de Patos</h2>
+<p class="muted">Controle separado para patos, sem misturar os dados com galinhas.</p>
+<select id="duckFarm"></select>
+<input id="duckAdults" type="number" min="0" placeholder="Patos adultos">
+<input id="duckFemales" type="number" min="0" placeholder="Fêmeas">
+<input id="duckMales" type="number" min="0" placeholder="Machos">
+<input id="ducklings" type="number" min="0" placeholder="Patinhos">
+<button id="saveDucks">Guardar plantel de patos</button>
+
+<h3>🥚 Produção de ovos de pato</h3>
+<input id="duckEggs" type="number" min="0" placeholder="Ovos de pato produzidos">
+<button id="saveDuckEggs">Guardar produção</button>
+
+<h3>💰 Vendas de patos</h3>
+<input id="duckSaleQty" type="number" min="0" placeholder="Quantidade de patos vendidos">
+<input id="duckSaleValue" type="number" min="0" placeholder="Valor da venda (MT)">
+<button id="saveDuckSales">Guardar venda de patos</button>
+
+<h3>🌾 Alimentação dos patos</h3>
+<input id="duckFeed" placeholder="Tipo de alimento">
+<input id="duckFeedQty" type="number" min="0" placeholder="Quantidade (kg)">
+<button id="saveDuckFeed">Registar alimentação</button>
+<div id="duckList"></div>
+</section>
+<section class="card" id="medSec"><h2>💊 Medicamentos</h2>
+<p class="muted">Regista medicamentos e tratamentos usados na granja. Confirma sempre o rótulo e orientação de um veterinário/agente pecuário, especialmente para doses e período de carência dos ovos/carne.</p>
+<select id="medFarm"></select>
+<input id="medName" placeholder="Nome do medicamento">
+<select id="medType">
+<option value="">Tipo de medicamento</option>
+<option>Antiparasitário</option><option>Antibiótico</option><option>Vacina</option>
+<option>Vitaminas / suplemento</option><option>Anticoccidiano</option><option>Outro</option>
+</select>
+<input id="medPurpose" placeholder="Para que foi usado / suspeita de problema">
+<input id="medDate" type="date">
+<input id="medValue" type="number" min="0" placeholder="Custo (MT)">
+<button id="saveMed">Registar medicamento</button>
+<div id="medList"></div></section>
+
+<section class="card" id="tipsSec"><h2>📚 Dicas e cuidados</h2>
+<h3>🐔 Poedeiras</h3>
+<ul>
+<li>Fornecer água limpa e fresca todos os dias.</li>
+<li>Usar alimentação equilibrada e garantir fonte adequada de cálcio.</li>
+<li>Manter o galinheiro seco, limpo e bem ventilado.</li>
+<li>Recolher os ovos regularmente e manter ninhos limpos.</li>
+<li>Observar diariamente consumo de água/comida, fezes, respiração e comportamento.</li>
+</ul>
+<h3>🐓 Frangos de corte</h3>
+<ul>
+<li>Garantir ração adequada à fase de crescimento e água disponível.</li>
+<li>Evitar superlotação e manter boa ventilação.</li>
+<li>Manter cama seca para reduzir problemas de patas e doenças.</li>
+<li>Separar aves doentes das saudáveis e procurar orientação profissional.</li>
+</ul>
+<h3>🩺 Sinais de alerta</h3>
+<p>Falta de apetite, diarreia persistente, dificuldade para respirar, tosse/espirros, mortalidade anormal, fraqueza ou queda repentina na produção de ovos exigem atenção rápida.</p>
+<h3>🩺 Doenças prováveis e sintomas</h3>
+<div class="farm">
+<b>Coccidiose</b><br>
+Sinais: diarreia, fezes com sangue ou muito escuras, fraqueza, penas arrepiadas, perda de apetite e crescimento reduzido.
+</div>
+<div class="farm">
+<b>Doença de Newcastle</b><br>
+Sinais: dificuldade respiratória, tosse/espirros, falta de apetite, queda na produção de ovos, sinais nervosos e mortalidade. É uma doença grave e requer avaliação veterinária rápida.
+</div>
+<div class="farm">
+<b>Bronquite infecciosa</b><br>
+Sinais: tosse, espirros, corrimento nasal, dificuldade respiratória e queda na produção ou qualidade dos ovos.
+</div>
+<div class="farm">
+<b>Gumboro (Doença Infecciosa da Bursa)</b><br>
+Sinais: principalmente em aves jovens, apatia, penas arrepiadas, diarreia, desidratação e fraqueza.
+</div>
+<div class="farm">
+<b>Varíola aviária</b><br>
+Sinais: crostas ou lesões na pele, especialmente na cabeça e regiões sem penas; em alguns casos, lesões na boca e dificuldade para comer ou respirar.
+</div>
+<div class="farm">
+<b>Salmonelose / pulorose</b><br>
+Sinais: diarreia, fraqueza, perda de apetite, desidratação e mortalidade; aves jovens podem apresentar sinais mais intensos.
+</div>
+<div class="farm">
+<b>Verminoses</b><br>
+Sinais: emagrecimento, crescimento lento, penas sem brilho, diarreia, fraqueza e redução da produção de ovos.
+</div>
+<div class="farm">
+<b>Piolhos, ácaros e outros parasitas externos</b><br>
+Sinais: coceira, inquietação, perda de penas, pele irritada, anemia e queda de produção.
+</div>
+<div class="farm">
+<b>Problemas nutricionais</b><br>
+Sinais: crescimento lento, ovos com qualidade inadequada, casca fraca, perda de condição corporal e queda de produção.
+</div>
+<div class="farm">
+<b>Problemas respiratórios por ambiente</b><br>
+Sinais: tosse, espirros e dificuldade respiratória, especialmente com poeira, amoníaco, humidade ou ventilação insuficiente.
+</div>
+<p class="muted"><b>⚠️ Atenção:</b> vários problemas têm sintomas parecidos. Estes sinais não confirmam uma doença. Separe aves muito doentes, garanta água e boas condições de higiene/ventilação e procure um veterinário ou agente pecuário para diagnóstico. Não administre antibióticos ou outros medicamentos sem orientação. Respeite sempre o período de carência para ovos e carne.</p>
+
+<h3>🔎 Sobre doenças e tratamento</h3>
+<div class="farm">
+<b>Coccidiose</b><br>Possíveis sinais: diarreia, fraqueza, perda de apetite e queda de desempenho. O tratamento depende do diagnóstico e deve usar produto autorizado e orientação profissional.
+</div>
+<div class="farm">
+<b>Doenças respiratórias</b><br>Tosse, espirros, secreção nasal ou dificuldade respiratória podem ter várias causas. Isolar aves afetadas, melhorar ventilação e procurar um veterinário/agente pecuário para identificar a causa antes de medicar.
+</div>
+<div class="farm">
+<b>Parasitas externos e internos</b><br>Podem causar emagrecimento, anemia, irritação e queda de produção. O produto e o esquema dependem do parasita; siga o rótulo e orientação profissional.
+</div>
+<p class="muted"><b>Importante:</b> não usar antibióticos ou outros medicamentos "por tentativa". Respeitar doses, indicação, período de carência para ovos/carne e regras locais.</p>
+</section>
+<section class="card"><h2>📈 Relatório</h2><div id="report"></div></section>
+
+<section class="card"><h2>💾 Backup</h2><button class="alt" id="backup">⬇️ Fazer backup</button>
+<input id="restore" type="file" accept=".json"><button id="clear">Apagar todos os dados</button></section>
+</div>
+<nav><button onclick="scrollTo(0,0)">🏠 Início</button><button onclick="document.getElementById('farmSec').scrollIntoView()">🏡 Granjas</button><button onclick="document.getElementById('duckSec').scrollIntoView()">🦆 Patos</button><button onclick="document.getElementById('speciesSec').scrollIntoView()">➕ Outra</button><button onclick="document.getElementById('saveEgg').scrollIntoView()">🥚 Ovos</button><button onclick="document.getElementById('saveSales').scrollIntoView()">💰 Vendas</button><button onclick="document.getElementById('medSec').scrollIntoView()">💊 Med.</button><button onclick="document.getElementById('tipsSec').scrollIntoView()">📚 Dicas</button><button onclick="document.getElementById('report').scrollIntoView()">📊 Relatório</button></nav>
+
+<script>
+(function(){
+const KEY="GF6";let db;
+try{db=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){db=null}
+if(!db)db={farms:[],sales:{eggs:0,chicks:0,hens:0,revenue:0},feed:[],alarms:{a7:true,a15:true,a19:true},species:[]};
+if(!db.species)db.species=[];
+const $=id=>document.getElementById(id), money=n=>Number(n||0).toLocaleString("pt-MZ")+" MT";
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function farm(id){return db.farms.find(f=>f.id==Number($(id).value))}
+function opts(){return db.farms.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join("")}
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function render(){
+ let aves=0,eggs=0,rev=0,exp=0;db.farms.forEach(f=>{aves+=f.layers+f.roosters+f.chicks;eggs+=f.eggs;rev+=f.revenue;exp+=f.expense});
+ $("sF").textContent=db.farms.length;$("sA").textContent=aves;$("sO").textContent=eggs;$("sP").textContent=money(rev-exp);
+ ["stockFarm","eggFarm","saleFarm","feedFarm"].forEach(id=>$(id).innerHTML=opts());
+ $("farmList").innerHTML=db.farms.map(f=>`<div class=farm><b>🏡 ${esc(f.name)}</b><br>${esc(f.location)}<br>🐔 ${f.layers+f.roosters+f.chicks} aves • 🦆 ${f.ducks||0} patos • 🥚 ${f.eggs} ovos<br>💰 Receita ${money(f.revenue)} • Despesas ${money(f.expense)} • Lucro ${money(f.revenue-f.expense)}</div>`).join("")||"<p class=muted>Nenhuma granja cadastrada.</p>";
+ $("feedList").innerHTML=db.feed.length?db.feed.slice().reverse().map(x=>`<div class=farm>🌾 <b>${esc(x.name)}</b> — ${x.qty||0} kg — ${money(x.value)}<br><small>${esc(x.date||"Sem data")} • ${esc(x.farm)}</small></div>`).join(""):"<p class=muted>Nenhuma compra de ração registada.</p>";
+ $("report").innerHTML=db.farms.map(f=>`<div class=farm><b>${esc(f.name)}</b><br>🥚 Ovos de galinha: ${f.eggs} • 🦆 Ovos de pato: ${f.duckEggs||0}<br>🦆 Patos: ${f.ducks||0} • Patinhos: ${f.ducklings||0}<br>🐣 Pintos vendidos: ${f.chicksSold||0} • 🐔 Galinhas vendidas: ${f.hensSold||0}<br>🥚 Ovos vendidos: ${f.eggsSold||0}<br>💰 Receita: ${money(f.revenue)} • Despesas: ${money(f.expense)}<br><b>Lucro: ${money(f.revenue-f.expense)}</b></div>`).join("")||"<p class=muted>Adicione uma granja.</p>";
+ $("a7").checked=db.alarms.a7;$("a15").checked=db.alarms.a15;$("a19").checked=db.alarms.a19;
+}
+$("addFarm").onclick=()=>{let n=$("fn").value.trim();if(!n)return alert("Digite o nome da granja.");db.farms.push({id:Date.now(),name:n,location:$("fl").value.trim(),layers:0,roosters:0,chicks:0,eggs:0,revenue:0,expense:0,eggsSold:0,chicksSold:0,hensSold:0,ducks:0,duckFemales:0,duckMales:0,ducklings:0,duckEggs:0,ducksSold:0,duckRevenue:0,duckFeed:[]});$("fn").value="";$("fl").value="";save();alert("Granja adicionada!")};
+$("saveStock").onclick=()=>{let f=farm("stockFarm");if(!f)return alert("Adicione uma granja.");f.layers=+$("layers").value||0;f.roosters=+$("roosters").value||0;f.chicks=+$("chicks").value||0;save();alert("Plantel guardado!")};
+$("saveEgg").onclick=()=>{let f=farm("eggFarm"),n=+$("eggAmount").value;if(!f||n<1)return alert("Escolha uma granja e informe os ovos.");f.eggs+=n;$("eggAmount").value="";save();alert("Produção guardada!")};
+$("saveSales").onclick=()=>{
+ let f=farm("saleFarm");if(!f)return alert("Adicione uma granja.");
+ let eq=+$("eggSale").value||0,ev=+$("eggSaleValue").value||0,cq=+$("chickSale").value||0,cv=+$("chickSaleValue").value||0,hq=+$("henSale").value||0,hv=+$("henSaleValue").value||0;
+ f.eggsSold+=eq;f.chicksSold+=cq;f.hensSold+=hq;f.revenue+=ev+cv+hv;
+ ["eggSale","eggSaleValue","chickSale","chickSaleValue","henSale","henSaleValue"].forEach(id=>$(id).value="");save();alert("Vendas guardadas!");
+};
+$("saveFeed").onclick=()=>{let f=farm("feedFarm"),v=+$("feedValue").value||0;if(!f||v<=0)return alert("Escolha a granja e informe o valor da compra.");f.expense+=v;db.feed.push({farm:f.name,name:$("feedName").value||"Ração",qty:+$("feedQty").value||0,value:v,date:$("feedDate").value||new Date().toISOString().slice(0,10)});["feedName","feedQty","feedValue","feedDate"].forEach(id=>$(id).value="");save();alert("Compra de ração registada!")};
+$("notifyBtn").onclick=async()=>{
+ db.alarms={a7:$("a7").checked,a15:$("a15").checked,a19:$("a19").checked};save();
+ if("Notification" in window){let p=await Notification.requestPermission();$("alarmStatus").textContent=p==="granted"?"🔔 Lembretes autorizados. Mantenha o aplicativo aberto para receber os alertas.":"⚠️ Permissão de notificações não autorizada."}else $("alarmStatus").textContent="⚠️ Este navegador não suporta notificações.";
+};
+let last={};
+setInterval(()=>{
+ let now=new Date(),hh=String(now.getHours()).padStart(2,"0"),mm=String(now.getMinutes()).padStart(2,"0"),key=hh+":"+mm;
+ let active=(hh==="07"&&mm==="00"&&db.alarms.a7)||(hh==="15"&&mm==="00"&&db.alarms.a15)||(hh==="19"&&mm==="00"&&db.alarms.a19);
+ if(active&&last[key]!==now.toDateString()){last[key]=now.toDateString();if("Notification" in window&&Notification.permission==="granted")new Notification("🐔 Hora de dar comida",{body:"Está na hora de alimentar as galinhas — "+key});else alert("🐔 Hora de dar comida — "+key)}
+},15000);
+$("backup").onclick=()=>{let a=document.createElement("a"),u=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:"application/json"}));a.href=u;a.download="granja-facil-backup.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),500)};
+$("restore").onchange=e=>{let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.farms)throw 0;db=x;save();alert("Backup restaurado!")}catch(_){alert("Backup inválido.")}};if(e.target.files[0])r.readAsText(e.target.files[0])};
+$("clear").onclick=()=>{if(confirm("Apagar todos os dados?")){db={farms:[],sales:{eggs:0,chicks:0,hens:0,revenue:0},feed:[],alarms:{a7:true,a15:true,a19:true}};save()}};
+
+
+
+$("addSpecies").onclick=()=>{
+ let name=$("newSpecies").value.trim();
+ if(!name)return alert("Digite o nome da criação.");
+ db.species.push({id:Date.now(),name:name,quantity:0,production:0,sold:0,revenue:0,expense:0});
+ $("newSpecies").value="";save();alert("Criação adicionada com sucesso!");
+};
+$("saveDucks").onclick=()=>{
+ let f=farm("duckFarm");if(!f)return alert("Adicione uma granja primeiro.");
+ f.ducks=+$("duckAdults").value||0;f.duckFemales=+$("duckFemales").value||0;
+ f.duckMales=+$("duckMales").value||0;f.ducklings=+$("ducklings").value||0;
+ save();alert("Plantel de patos guardado!");
+};
+$("saveDuckEggs").onclick=()=>{
+ let f=farm("duckFarm"),n=+$("duckEggs").value||0;if(!f||n<1)return alert("Informe a quantidade de ovos de pato.");
+ f.duckEggs=(f.duckEggs||0)+n;$("duckEggs").value="";save();alert("Produção de ovos de pato guardada!");
+};
+$("saveDuckSales").onclick=()=>{
+ let f=farm("duckFarm"),q=+$("duckSaleQty").value||0,v=+$("duckSaleValue").value||0;
+ if(!f||q<1)return alert("Informe a quantidade de patos vendidos.");
+ f.ducksSold=(f.ducksSold||0)+q;f.duckRevenue=(f.duckRevenue||0)+v;f.revenue+=v;
+ $("duckSaleQty").value="";$("duckSaleValue").value="";save();alert("Venda de patos guardada!");
+};
+$("saveDuckFeed").onclick=()=>{
+ let f=farm("duckFarm"),q=+$("duckFeedQty").value||0,name=$("duckFeed").value||"Alimento";
+ if(!f||q<1)return alert("Informe a quantidade de alimento.");
+ if(!f.duckFeed)f.duckFeed=[];f.duckFeed.push({name:name,qty:q,date:new Date().toISOString().slice(0,10)});
+ $("duckFeed").value="";$("duckFeedQty").value="";save();alert("Alimentação dos patos registada!");
+};
+
+$("saveMed").onclick=()=>{
+ let f=farm("medFarm"),name=$("medName").value.trim(),value=+$("medValue").value||0;
+ if(!f||!name)return alert("Escolha a granja e informe o medicamento.");
+ if(!f.meds)f.meds=[];
+ f.meds.push({name:name,type:$("medType").value||"Outro",purpose:$("medPurpose").value,date:$("medDate").value||new Date().toISOString().slice(0,10),value:value});
+ f.expense+=value;
+ ["medName","medPurpose","medDate","medValue"].forEach(id=>$(id).value="");
+ $("medType").selectedIndex=0;save();alert("Medicamento registado!");
+};
+const oldRender=render;
+render=function(){
+ oldRender();
+ $("medFarm").innerHTML=opts();$("duckFarm").innerHTML=opts();
+ 
+ 
+ let speciesHtml=db.species.map((sp,i)=>`<div class="farm"><b>🦃 ${esc(sp.name)}</b><br>
+ Plantel: ${sp.quantity||0} • Produção: ${sp.production||0} • Vendidos: ${sp.sold||0}<br>
+ Receita: ${money(sp.revenue||0)} • Despesas: ${money(sp.expense||0)} • Lucro: ${money((sp.revenue||0)-(sp.expense||0))}
+ </div>`).join("");
+ $("speciesList").innerHTML=speciesHtml||"<p class=muted>Nenhuma criação adicional.</p>";
+
+let duckHtml=db.farms.map(f=>`<div class="farm"><b>🦆 ${esc(f.name)}</b><br>
+ Patos: ${(f.ducks||0)} • Fêmeas: ${(f.duckFemales||0)} • Machos: ${(f.duckMales||0)} • Patinhos: ${(f.ducklings||0)}<br>
+ Ovos de pato: ${(f.duckEggs||0)} • Patos vendidos: ${(f.ducksSold||0)} • Receita: ${money(f.duckRevenue||0)}
+ </div>`).join("");
+ $("duckList").innerHTML=duckHtml||"<p class=muted>Nenhum pato registado.</p>";
+
+ let all=[];
+ db.farms.forEach(f=>(f.meds||[]).forEach(m=>all.push({farm:f.name,...m})));
+ $("medList").innerHTML=all.length?all.slice().reverse().map(m=>`<div class="farm">💊 <b>${esc(m.name)}</b> — ${esc(m.type)}<br>${esc(m.purpose||"Sem indicação")}<br><small>${esc(m.date)} • ${esc(m.farm)} • ${money(m.value)}</small></div>`).join(""):"<p class=muted>Nenhum medicamento registado.</p>";
+};
+render();
+})();
+</script>
+</body></html>
