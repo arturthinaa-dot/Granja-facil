@@ -28,11 +28,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
+          
+          
       - name: Criar projeto Capacitor
         run: |
-          mkdir app
-          cp granja_facil_v10.html app/index.html
+          mkdir -p app/www
+          cp granja_facil_v10.html app/www/index.html
           cd app
 
           npm init -y
@@ -40,11 +41,10 @@ jobs:
           npm install @capacitor/core@7 @capacitor/android@7
           npm install -D @capacitor/cli@7
 
-          npx cap init "Granja Fácil" "mz.granjafacil.app" --web-dir=.
+          npx cap init "Granja Fácil" "mz.granjafacil.app" --web-dir=www
 
           npx cap add android
           npx cap sync android
-
       - name: Gerar APK
         run: |
           cd app/android
