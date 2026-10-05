@@ -19,8 +19,10 @@ jobs:
 
       - name: Configurar Android
         uses: android-actions/setup-android@v4
-        with:
-          packages: 'platform-tools'
+
+      - name: Instalar Android SDK
+        run: |
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Instalar Node.js
         uses: actions/setup-node@v4
@@ -32,10 +34,14 @@ jobs:
           mkdir app
           cp granja_facil_v10.html app/index.html
           cd app
+
           npm init -y
+
           npm install @capacitor/core@7 @capacitor/android@7
           npm install -D @capacitor/cli@7
+
           npx cap init "Granja Fácil" "mz.granjafacil.app" --web-dir=.
+
           npx cap add android
           npx cap sync android
 
